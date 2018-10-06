@@ -1,0 +1,43 @@
+Store data in localStorage with option to backup/download JSON
+
+Put state.time into weeks array
+
+Make Week component with date property, and then move Days into Week
+
+
+currentWeek : 12,
+weeklyRequiredTotalMinutes : 20 * 60, 
+weeks : [
+    0 : {
+        dateCommencing : 20180820,
+        days : {
+            weds : {
+                start : 8:20,
+                break : 0,
+                end : 16:00,
+                total : 7:40
+            }
+            thurs : {
+                start : 8:40,
+                break : 30,
+                end : 16:00,
+                total : 7:10
+            }
+            fri : {
+                start : 9:00,
+                break : 30,
+                end : 15:00,
+                total : 5:30
+            }
+        }
+        timeCompleteMinutes : 920,
+        timeRemaining : 120,
+    }
+]
+
+
+
+Use a datepicker... how to work out today? Use moment.js?
+
+On app load - get data from localstorage and save in state.
+On time submit - save in state and in localstorage
