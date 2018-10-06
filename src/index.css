@@ -119,6 +119,14 @@ header {
   font-weight: bold;
 }
 
+#button--new-week {
+  background: none;
+  border: 2px solid #137a13;
+  border-radius: 4px;
+  color: #137a13;
+  margin-right: 1rem;
+}
+
 #button--reset {
   background: none;
   border: 2px solid #bd1c1c;

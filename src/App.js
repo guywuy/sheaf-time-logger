@@ -9,13 +9,14 @@ class App extends Component {
     this.state = {
       currentWeek: 0,
       weeklyRequiredTotalMinutes: 60 * 22.5,
-      weeklyTotalProgress: 60 * 12.5,
-      weeks: [],
-      time: ""
+      weeklyTotalProgress: 0,
+      weeks: {},
+      time: {}
     };
 
     this.handleTimeChange = this.handleTimeChange.bind(this);
     this.resetWeek = this.resetWeek.bind(this);
+    this.startNewWeek = this.startNewWeek.bind(this);
   }
 
   saveStateToLocalStorage() {
@@ -44,6 +45,21 @@ class App extends Component {
         }
       }
     }
+  }
+
+  startNewWeek(){
+    this.setState({
+      currentWeek: this.state.currentWeek + 1,
+      weeks: {
+        ...this.state.weeks,
+        [this.state.currentWeek]: {
+          ...this.state.time,
+          dateSaved: new Date().toLocaleDateString()
+        }
+      },
+      time: {},
+      weeklyTotalProgress : 0
+    }, this.updateWeeklyProgress())
   }
 
   updateWeeklyProgress(){
@@ -162,10 +178,6 @@ class App extends Component {
     this.saveStateToLocalStorage();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    
-  }
-
   render() {
     return (
       <div className="app">
@@ -228,6 +240,7 @@ class App extends Component {
           </progress>
           <p className="progress__bar-label">{ Math.round(this.state.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) }%</p>
 
+          <button id="button--new-week" onClick={ this.startNewWeek }>Start new week</button>
           <button id="button--reset" onClick={ this.resetWeek }>Reset week</button>
         </section>
 
