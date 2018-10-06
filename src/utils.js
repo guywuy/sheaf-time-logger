@@ -12,10 +12,8 @@ export function getDifferenceBetweenTimesInMinutes(start, end, breakTime){
     let totalTimeInMinutes = (totalHours*60) + totalMinutes;
 
     if (breakTime){
-        let breakInMins = (parseInt(breakTime.split(':')[0], 10)*60) + parseInt(breakTime.split(':')[1], 10)
-        totalTimeInMinutes -= breakInMins; 
+        totalTimeInMinutes -= parseInt(breakTime, 10); 
     }
-
 
     return totalTimeInMinutes;
 }

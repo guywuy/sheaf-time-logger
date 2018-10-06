@@ -12,6 +12,7 @@ h1, h2, h3, h4, h5 {
 }
 header {
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .timelog {
@@ -63,7 +64,8 @@ header {
   font-size: 18px;
 }
 
-.day input {
+.day input,
+.day select {
   width: 80%;
   height: 90%;
   text-align: center;

@@ -57,7 +57,7 @@ class App extends Component {
     }
     
     for (let day in this.state.time) {
-      let dayTotal = (this.state.time[day].total && this.state.time[day].total > 0) ? this.state.time[day].total : 0;
+      let dayTotal = (this.state.time[day].total && (this.state.time[day].total > 0)) ? this.state.time[day].total : 0;
       totalForTheWeek += dayTotal
     }
 
@@ -108,8 +108,21 @@ class App extends Component {
       default:
         break;
     }
+
+    let totalForTheWeek = 0;
+    
+    for (let day in this.state.time) {
+      // If day is the updated day, use the new totalTime, else add the day.total from state
+      if (day === whichDay) {
+        totalForTheWeek += totalTime
+      } else {
+        let dayTotal = (this.state.time[day].total && (this.state.time[day].total > 0)) ? this.state.time[day].total : 0;
+        totalForTheWeek += dayTotal
+      }
+    }
       
     this.setState({
+      weeklyTotalProgress : totalForTheWeek,
       time : {
         ...this.state.time,
         [whichDay]: {
@@ -118,7 +131,7 @@ class App extends Component {
           'total' : totalTime
         },
       }
-    }, this.updateWeeklyProgress())
+    })
   }
   
   resetWeek(){

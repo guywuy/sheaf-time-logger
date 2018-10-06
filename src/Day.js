@@ -6,6 +6,8 @@ export const Day = ({
   timeValue,
   onChange
 }) => {
+
+  const breakTimeOptions = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
   return (
     <div className="day">
       <div className="day__dayname">
@@ -26,14 +28,21 @@ export const Day = ({
 
       <div>
         <label htmlFor={`time-${ whichDay }-break`}>Break</label>
-        <input
-          type="time"
+        <select
           id={`time-${ whichDay }-break`}
           data-day={ whichDay }
           data-period="break"
-          value={(timeValue && timeValue.break) ? timeValue.break : ''}
+          value={(timeValue && timeValue.break) ? timeValue.break : 0}
           onChange={onChange}
-          />
+        >
+          { breakTimeOptions.map((option, i) => {
+            return (
+              <option value={option} key={i}>{option}</option>
+              )
+          }) }
+
+        </select>
+        
       </div>
 
       <div>
