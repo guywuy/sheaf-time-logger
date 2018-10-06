@@ -50,7 +50,11 @@ class App extends Component {
 
     let totalForTheWeek = 0;
     
-    if(!this.state.time) return;
+    if (!this.state.time) {
+      return this.setState({
+        weeklyTotalProgress : 0
+      });
+    }
     
     for (let day in this.state.time) {
       let dayTotal = (this.state.time[day].total && this.state.time[day].total > 0) ? this.state.time[day].total : 0;
@@ -59,7 +63,7 @@ class App extends Component {
 
     this.setState({
       weeklyTotalProgress : totalForTheWeek
-    })
+    });
 
   }
 
@@ -166,7 +170,7 @@ class App extends Component {
             <h2>Start</h2>
             <h2>Break</h2>
             <h2>End</h2>
-            <h1>Total</h1>
+            <h2>Total</h2>
           </div>
 
           <Day
@@ -192,22 +196,24 @@ class App extends Component {
 
         <section className="progress">
           <p>
-            TOTAL FOR THE WEEK:
+            Weekly progress:  
+            <strong className="progress__time">
+              <span>
+
+              {this.state.weeklyTotalProgress === 0 ? '0' : utils.formatMinutesAsString(this.state.weeklyTotalProgress)}</span> / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}
+            </strong>
           </p>
-          <h4>
-            {this.state.weeklyTotalProgress === 0 ? '0' : utils.formatMinutesAsString(this.state.weeklyTotalProgress)} / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}
-          </h4>
-          
           <label htmlFor="weekly-progress" className="progress__label">Weekly progress</label>
           
           <progress
-            className="progress__bar"
+            className={ this.state.weeklyTotalProgress >= this.state.weeklyRequiredTotalMinutes ? "progress__bar progress__bar--complete" : "progress__bar" }
             name="weekly-progress"
             max={this.state.weeklyRequiredTotalMinutes}
             value={this.state.weeklyTotalProgress}
           >
             {this.state.weeklyTotalProgress}
           </progress>
+          <p className="progress__bar-label">{ Math.round(this.state.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) }%</p>
 
           <button id="button--reset" onClick={ this.resetWeek }>Reset week</button>
         </section>
