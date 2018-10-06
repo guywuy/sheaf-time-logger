@@ -1,5 +1,92 @@
 body {
   margin: 0;
-  padding: 0;
+  padding: 10px;
   font-family: sans-serif;
+  background: #F5F5F6;
+  color: #292929;
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+}
+header {
+  margin-bottom: 2rem;
+}
+
+.timelog {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.timelog>* {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(5, 50px);
+  grid-gap: 5px;
+  width: 25%;
+  text-align: center;
+}
+.timelog>*>*:first-child {
+  border-bottom: 1px dotted olive;
+  background: #001064;
+  color: white;
+}
+.timelog>*>*:last-child {
+  border-top: 1px dotted olive;
+  background: #5f5fc4;
+  color: white;
+}
+.timelog>*>* {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.timelog__leftcol {
+  align-items: stretch;
+  border-right: 1px dotted olive;
+}
+.timelog__leftcol p {
+  font-size: 14px;
+}
+.timelog__leftcol h2 {
+  font-weight: normal;
+  font-size: 18px;
+}
+
+.day label {
+  display: none;
+}
+
+.day__dayname h2 {
+  font-size: 18px;
+}
+
+.day input {
+  width: 80%;
+  height: 90%;
+  text-align: center;
+  background: none;
+  border: 2px solid #001064;
+  border-radius: 4px;
+  font-size: 18px;
+  margin: 0 auto;
+  font-weight: bold;
+}
+
+.progress__label {
+  display: none;
+}
+
+.progress__bar {
+  width: 100%;
+  margin: 2rem 0;
+}
+
+#button--reset {
+  background: none;
+  border: 2px solid #bd1c1c;
+  border-radius: 4px;
+  color: #bd1c1c;
 }

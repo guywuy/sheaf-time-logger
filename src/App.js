@@ -15,6 +15,7 @@ class App extends Component {
     };
 
     this.handleTimeChange = this.handleTimeChange.bind(this);
+    this.resetWeek = this.resetWeek.bind(this);
   }
 
   saveStateToLocalStorage() {
@@ -114,8 +115,13 @@ class App extends Component {
         },
       }
     }, this.updateWeeklyProgress())
-      
-
+  }
+  
+  resetWeek(){
+    this.setState({
+      time : {},
+      weeklyTotalProgress : 0
+    }, this.updateWeeklyProgress())
   }
 
   componentDidMount() {
@@ -147,50 +153,66 @@ class App extends Component {
     return (
       <div className="app">
         <header className="header">
-          <h1 className="header__title">Timelogger</h1>
+          <h1 className="header__title">Hi!</h1>
         </header>
         
         
         <section className="timelog">
-          <Day 
-          whichDay='weds'
-          timeValue={this.state.time.weds}
-          onChange={this.handleTimeChange}
-          >
-          </Day>
 
-          <Day 
-          whichDay='thurs'
-          timeValue={this.state.time.thurs}
-          onChange={this.handleTimeChange}
-          >
-          </Day>
+          <div className="timelog__leftcol">
+            <div>
+              <p>{ new Date().toLocaleDateString() }</p>
+            </div>
+            <h2>Start</h2>
+            <h2>Break</h2>
+            <h2>End</h2>
+            <h1>Total</h1>
+          </div>
 
-          <Day 
-          whichDay='fri'
-          timeValue={this.state.time.fri}
-          onChange={this.handleTimeChange}
-          >
-          </Day>
+          <Day
+            whichDay='weds'
+            timeValue={this.state.time.weds}
+            onChange={this.handleTimeChange}
+          />
 
+          <Day
+            whichDay='thurs'
+            timeValue={this.state.time.thurs}
+            onChange={this.handleTimeChange}
+          />
+
+          <Day
+            whichDay='fri'
+            timeValue={this.state.time.fri}
+            onChange={this.handleTimeChange}
+          />
           
         </section>
 
 
         <section className="progress">
-          <div>
-          <h1>TOTAL FOR THE WEEK: {utils.formatMinutesAsString(this.state.weeklyTotalProgress)} / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}</h1>
-            <label htmlFor="weekly-progress">Weekly progress</label>
-            <progress
-              id="weekly-progress"
-              name="weekly-progress"
-              max={this.state.weeklyRequiredTotalMinutes}
-              value={this.state.weeklyTotalProgress}
-            >
-              {this.state.weeklyTotalProgress}
-            </progress>
-          </div>
+          <p>
+            TOTAL FOR THE WEEK:
+          </p>
+          <h4>
+            {this.state.weeklyTotalProgress === 0 ? '0' : utils.formatMinutesAsString(this.state.weeklyTotalProgress)} / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}
+          </h4>
+          
+          <label htmlFor="weekly-progress" className="progress__label">Weekly progress</label>
+          
+          <progress
+            className="progress__bar"
+            name="weekly-progress"
+            max={this.state.weeklyRequiredTotalMinutes}
+            value={this.state.weeklyTotalProgress}
+          >
+            {this.state.weeklyTotalProgress}
+          </progress>
+
+          <button id="button--reset" onClick={ this.resetWeek }>Reset week</button>
         </section>
+
+        
       </div>
     );
   }

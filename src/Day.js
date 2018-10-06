@@ -7,8 +7,10 @@ export const Day = ({
   onChange
 }) => {
   return (
-    <div>
-      <h2>{ whichDay.toUpperCase() }</h2>
+    <div className="day">
+      <div className="day__dayname">
+        <h2>{ whichDay.toUpperCase() }</h2>
+      </div>
 
       <div>
         <label htmlFor={`time-${ whichDay }-start`}>Start</label>
@@ -33,7 +35,7 @@ export const Day = ({
           onChange={onChange}
           />
       </div>
-      
+
       <div>
         <label htmlFor={`time-${ whichDay }-end`}>End</label>
         <input
@@ -46,7 +48,7 @@ export const Day = ({
           />
       </div>
 
-      <h3>Total: { (timeValue && timeValue.total) ? utils.formatMinutesAsString(timeValue.total) : 0 }</h3>
+      <h3 className="day__total">{ (timeValue && timeValue.total) ? utils.formatMinutesAsString(timeValue.total) : 0 }</h3>
     </div>
   )
 }
