@@ -116,7 +116,6 @@ class App extends Component {
     switch (whichPeriod) {
       case 'start' :
         if (currentWeekData[whichDay] &&
-          currentWeekData[whichDay].start &&
           currentWeekData[whichDay].end &&
           newValue < currentWeekData[whichDay].end
         ){
@@ -126,7 +125,6 @@ class App extends Component {
       case 'end' :
         if (currentWeekData[whichDay] &&
           currentWeekData[whichDay].start &&
-          currentWeekData[whichDay].end &&
           currentWeekData[whichDay].start < newValue
         ){
           totalTime = utils.getDifferenceBetweenTimesInMinutes(currentWeekData[whichDay].start, newValue, breakTime)
@@ -200,7 +198,13 @@ class App extends Component {
       displayWeek: 0,
       showDeleteConfirmation: false,
       weeklyRequiredTotalMinutes: 60 * 22.2,
-      weeks: {},
+      weeks: {
+        0: {
+          weds: {},
+          thurs: {},
+          fri: {},
+        }
+      },
     })
   }
 
@@ -407,7 +411,7 @@ class App extends Component {
         <div>
           <button className="btn btn--primary" id="button--delete-all-cancel" 
           onClick={this.cancelClearAllData}>Cancel</button>
-          <button className="btnbtn--warning" id="button--delete-all-confirm" 
+          <button className="btn btn--warning" id="button--delete-all-confirm" 
           onClick={this.confirmClearAllData}>Yes, I'm sure</button>
         </div>
         }
