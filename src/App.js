@@ -8,6 +8,8 @@ class App extends Component {
 
     this.state = {
       currentWeek: 0,
+      displayWeek: 0,
+      showClearConfirmation: false,
       weeklyRequiredTotalMinutes: 60 * 22.5,
       weeklyTotalProgress: 0,
       weeks: {},
@@ -17,6 +19,11 @@ class App extends Component {
     this.handleTimeChange = this.handleTimeChange.bind(this);
     this.resetWeek = this.resetWeek.bind(this);
     this.startNewWeek = this.startNewWeek.bind(this);
+    this.viewCurrentWeek = this.viewCurrentWeek.bind(this);
+    this.viewPreviousWeek = this.viewPreviousWeek.bind(this);
+    this.showClearConfirmation = this.showClearConfirmation.bind(this);
+    this.cancelClearAllData = this.cancelClearAllData.bind(this);
+    this.confirmClearAllData = this.confirmClearAllData.bind(this);
   }
 
   saveStateToLocalStorage() {
@@ -50,11 +57,13 @@ class App extends Component {
   startNewWeek(){
     this.setState({
       currentWeek: this.state.currentWeek + 1,
+      displayWeek: this.state.currentWeek + 1,
       weeks: {
         ...this.state.weeks,
         [this.state.currentWeek]: {
           ...this.state.time,
-          dateSaved: new Date().toLocaleDateString()
+          dateSaved: new Date().toLocaleDateString(),
+          weeklyTotalProgress: this.state.weeklyTotalProgress
         }
       },
       time: {},
@@ -80,7 +89,6 @@ class App extends Component {
     this.setState({
       weeklyTotalProgress : totalForTheWeek
     });
-
   }
 
   handleTimeChange(ev) {
@@ -157,6 +165,42 @@ class App extends Component {
     }, this.updateWeeklyProgress())
   }
 
+  showClearConfirmation(){
+    this.setState({
+      showDeleteConfirmation: true
+    })
+  }
+
+  cancelClearAllData(){
+    this.setState({
+      showDeleteConfirmation: false
+    })
+  }
+
+  confirmClearAllData(){
+    this.setState({
+      currentWeek: 0,
+      displayWeek: 0,
+      showDeleteConfirmation: false,
+      weeklyRequiredTotalMinutes: 60 * 22.5,
+      weeklyTotalProgress: 0,
+      weeks: {},
+      time: {}
+    })
+  }
+
+  viewCurrentWeek(){
+    this.setState({
+      displayWeek: this.state.currentWeek
+    })
+  }
+
+  viewPreviousWeek(){
+    this.setState({
+      displayWeek: this.state.displayWeek > 0 ? this.state.displayWeek - 1 : this.state.displayWeek
+    })
+  }
+
   componentDidMount() {
     this.hydrateStateWithLocalStorage();
 
@@ -179,13 +223,30 @@ class App extends Component {
   }
 
   render() {
+
+    const hasPreviousWeek = this.state.displayWeek > 0;
+    const isCurrentWeek = this.state.currentWeek === this.state.displayWeek;
+    const timeObject = isCurrentWeek ? this.state.time : this.state.weeks[this.state.displayWeek];
+
     return (
       <div className="app">
         <header className="header">
-          <h1 className="header__title">Hi!</h1>
+          { hasPreviousWeek &&
+            <button id="button--view-previous" onClick={ this.viewPreviousWeek }>&lt;</button>
+          }
+          <div className="header__title">
+            <h1>Week { this.state.displayWeek }</h1>
+            { !isCurrentWeek && 
+              <small>Current week: { this.state.currentWeek }</small>
+            }
+          </div>
+          
+          { !isCurrentWeek &&
+            <button id="button--view-current" onClick={ this.viewCurrentWeek }>Back to current week</button>
+          }
         </header>
         
-        
+        { isCurrentWeek && 
         <section className="timelog">
 
           <div className="timelog__leftcol">
@@ -199,52 +260,130 @@ class App extends Component {
           </div>
 
           <Day
-            whichDay='weds'
-            timeValue={this.state.time.weds}
-            onChange={this.handleTimeChange}
+          whichDay='weds'
+          timeValue={this.state.time.weds}
+          onChange={this.handleTimeChange}
+          disabled={false}
           />
-
+          
           <Day
-            whichDay='thurs'
-            timeValue={this.state.time.thurs}
-            onChange={this.handleTimeChange}
+          whichDay='thurs'
+          timeValue={this.state.time.thurs}
+          onChange={this.handleTimeChange}
+          disabled={false}
           />
-
+          
           <Day
-            whichDay='fri'
-            timeValue={this.state.time.fri}
-            onChange={this.handleTimeChange}
+          whichDay='fri'
+          timeValue={this.state.time.fri}
+          onChange={this.handleTimeChange}
+          disabled={false}
           />
           
         </section>
-
-
-        <section className="progress">
-          <p>
-            Weekly progress:  
-            <strong className="progress__time">
-              <span>
-
-              {this.state.weeklyTotalProgress === 0 ? '0' : utils.formatMinutesAsString(this.state.weeklyTotalProgress)}</span> / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}
-            </strong>
-          </p>
-          <label htmlFor="weekly-progress" className="progress__label">Weekly progress</label>
-          
-          <progress
-            className={ this.state.weeklyTotalProgress >= this.state.weeklyRequiredTotalMinutes ? "progress__bar progress__bar--complete" : "progress__bar" }
-            name="weekly-progress"
-            max={this.state.weeklyRequiredTotalMinutes}
-            value={this.state.weeklyTotalProgress}
-          >
-            {this.state.weeklyTotalProgress}
-          </progress>
-          <p className="progress__bar-label">{ Math.round(this.state.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) }%</p>
-
-          <button id="button--new-week" onClick={ this.startNewWeek }>Start new week</button>
-          <button id="button--reset" onClick={ this.resetWeek }>Reset week</button>
-        </section>
-
+        }
         
+        { !isCurrentWeek && 
+        <section className="timelog timelog--past">
+
+          <div className="timelog__leftcol">
+            <div>
+              <p>{ timeObject.dateSaved }</p>
+            </div>
+            <h2>Start</h2>
+            <h2>Break</h2>
+            <h2>End</h2>
+            <h2>Total</h2>
+          </div>
+
+          <Day
+          whichDay='weds'
+          timeValue={this.state.time.weds}
+          onChange={this.handleTimeChange}
+          disabled={true}
+          />
+          
+          <Day
+          whichDay='thurs'
+          timeValue={this.state.time.thurs}
+          onChange={this.handleTimeChange}
+          disabled={true}
+          />
+          
+          <Day
+          whichDay='fri'
+          timeValue={this.state.time.fri}
+          onChange={this.handleTimeChange}
+          disabled={true}
+          />
+          
+        </section>
+        }
+
+        { isCurrentWeek && 
+          <section className="progress">
+          <p>
+          Weekly progress:  
+          <strong className="progress__time">
+                <span>
+
+                {this.state.weeklyTotalProgress === 0 ? '0' : utils.formatMinutesAsString(this.state.weeklyTotalProgress)}</span> / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}
+              </strong>
+            </p>
+            <label htmlFor="weekly-progress" className="progress__label">Weekly progress</label>
+            
+            <progress
+              className={ this.state.weeklyTotalProgress >= this.state.weeklyRequiredTotalMinutes ? "progress__bar progress__bar--complete" : "progress__bar" }
+              name="weekly-progress"
+              max={this.state.weeklyRequiredTotalMinutes}
+              value={this.state.weeklyTotalProgress}
+              >
+              {this.state.weeklyTotalProgress}
+            </progress>
+            <p className="progress__bar-label">{ Math.round(this.state.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) }%</p>
+
+            <button id="button--new-week" onClick={ this.startNewWeek }>Start new week</button>
+            <button id="button--reset" onClick={ this.resetWeek }>Reset week</button>
+            
+          </section>
+        }
+
+        { !isCurrentWeek && 
+          <section className="progress">
+            <p>
+              Weekly progress:  
+              <strong className="progress__time">
+                <span>
+
+                {timeObject.weeklyTotalProgress === 0 ? '0' : utils.formatMinutesAsString(timeObject.weeklyTotalProgress)}</span> / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}
+              </strong>
+            </p>
+            <label htmlFor="weekly-progress" className="progress__label">Weekly progress</label>
+            
+            <progress
+              className={ timeObject.weeklyTotalProgress >= this.state.weeklyRequiredTotalMinutes ? "progress__bar progress__bar--complete" : "progress__bar" }
+              name="weekly-progress"
+              max={this.state.weeklyRequiredTotalMinutes}
+              value={timeObject.weeklyTotalProgress}
+              >
+              {timeObject.weeklyTotalProgress}
+            </progress>
+            <p className="progress__bar-label">{ Math.round(timeObject.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) }%</p>
+          </section>
+        }
+        <hr/>
+        { !this.state.showDeleteConfirmation && 
+          <button id="button--delete-all" 
+          onClick={this.showClearConfirmation}>Clear ALL data</button>
+        }
+        { this.state.showDeleteConfirmation && 
+        <div>
+          <button id="button--delete-all-cancel" 
+          onClick={this.cancelClearAllData}>NO!</button>
+          <button id="button--delete-all-confirm" 
+          onClick={this.confirmClearAllData}>REALLY?!?!</button>
+        </div>
+        }
       </div>
     );
   }

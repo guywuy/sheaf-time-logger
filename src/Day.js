@@ -4,7 +4,8 @@ import * as utils from "./utils";
 export const Day = ({
   whichDay,
   timeValue,
-  onChange
+  onChange,
+  disabled
 }) => {
 
   const breakTimeOptions = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
@@ -23,6 +24,7 @@ export const Day = ({
           data-period="start"
           value={(timeValue && timeValue.start) ? timeValue.start : ''}
           onChange={onChange}
+          disabled = { disabled }
           />
       </div>
 
@@ -34,6 +36,7 @@ export const Day = ({
           data-period="break"
           value={(timeValue && timeValue.break) ? timeValue.break : 0}
           onChange={onChange}
+          disabled = { disabled }
         >
           { breakTimeOptions.map((option, i) => {
             return (
@@ -54,6 +57,7 @@ export const Day = ({
           data-period="end"
           value={(timeValue && timeValue.end) ? timeValue.end : ''}
           onChange={onChange}
+          disabled = { disabled }
           />
       </div>
 

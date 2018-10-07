@@ -1,11 +1,5 @@
 Add option to download times as json or text (or pdf..?) Netlify function?
 
-Change break to be a select with 0 as default, options of 5 min increments
-
-
 Put state.time into weeks array
 
 Make Week component with date property, and then move Days into Week
-
-
-Use a datepicker... to be able to select weeks.
