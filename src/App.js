@@ -10,10 +10,14 @@ class App extends Component {
       currentWeek: 0,
       displayWeek: 0,
       showClearConfirmation: false,
-      weeklyRequiredTotalMinutes: 60 * 22.5,
-      weeklyTotalProgress: 0,
-      weeks: {},
-      time: {}
+      weeklyRequiredTotalMinutes: 60 * 22.2,
+      weeks: {
+        0: {
+          weds: {},
+          thurs: {},
+          fri: {},
+        }
+      },
     };
 
     this.handleTimeChange = this.handleTimeChange.bind(this);
@@ -55,19 +59,22 @@ class App extends Component {
   }
 
   startNewWeek(){
+    let nextWeekKey = this.state.currentWeek + 1
     this.setState({
-      currentWeek: this.state.currentWeek + 1,
-      displayWeek: this.state.currentWeek + 1,
+      currentWeek: nextWeekKey,
+      displayWeek: nextWeekKey,
       weeks: {
         ...this.state.weeks,
         [this.state.currentWeek]: {
-          ...this.state.time,
-          dateSaved: new Date().toLocaleDateString(),
-          weeklyTotalProgress: this.state.weeklyTotalProgress
+          ...this.state.weeks[this.state.currentWeek],
+          dateSaved: new Date().toLocaleDateString()
+        },
+        [nextWeekKey]: {
+          weds: {},
+          thurs: {},
+          fri: {},
         }
       },
-      time: {},
-      weeklyTotalProgress : 0
     }, this.updateWeeklyProgress())
   }
 
@@ -75,58 +82,63 @@ class App extends Component {
 
     let totalForTheWeek = 0;
     
-    if (!this.state.time) {
-      return this.setState({
-        weeklyTotalProgress : 0
-      });
+    if (!this.state.weeks[this.state.currentWeek]) {
+      return;
     }
     
-    for (let day in this.state.time) {
-      let dayTotal = (this.state.time[day].total && (this.state.time[day].total > 0)) ? this.state.time[day].total : 0;
+    for (let day in this.state.weeks[this.state.currentWeek]) {
+      let dayTotal = (this.state.weeks[this.state.currentWeek][day].total && (this.state.weeks[this.state.currentWeek][day].total > 0)) ? this.state.weeks[this.state.currentWeek][day].total : 0;
       totalForTheWeek += dayTotal
     }
 
     this.setState({
-      weeklyTotalProgress : totalForTheWeek
+      weeks: {
+        ...this.state.weeks,
+        [this.state.currentWeek]: {
+          ...this.state.weeks[this.state.currentWeek],
+          weeklyTotalProgress : totalForTheWeek
+        }
+      },
     });
   }
 
   handleTimeChange(ev) {
+    let currentWeekData = this.state.weeks[this.state.currentWeek];
     let changedElement = ev.target;
     let whichDay = changedElement.dataset.day;
     let whichPeriod = changedElement.dataset.period;
     let newValue = changedElement.value;
     
     let totalTime = 0;
-    let breakTime = (this.state.time[whichDay] && this.state.time[whichDay].break) ? this.state.time[whichDay].break : "00:00";
+    let breakTime = (currentWeekData[whichDay] && currentWeekData[whichDay].break) ? currentWeekData[whichDay].break : "00:00";
 
     // UPDATE TOTAL TIME FOR THE DAY
     switch (whichPeriod) {
       case 'start' :
-        if (this.state.time[whichDay] &&
-          this.state.time[whichDay].start &&
-          this.state.time[whichDay].end &&
-          newValue < this.state.time[whichDay].end
+        if (currentWeekData[whichDay] &&
+          currentWeekData[whichDay].start &&
+          currentWeekData[whichDay].end &&
+          newValue < currentWeekData[whichDay].end
         ){
-          totalTime = utils.getDifferenceBetweenTimesInMinutes(newValue, this.state.time[whichDay].end, breakTime)
+          totalTime = utils.getDifferenceBetweenTimesInMinutes(newValue, currentWeekData[whichDay].end, breakTime)
         }
         break;
       case 'end' :
-        if (this.state.time[whichDay] &&
-          this.state.time[whichDay].start &&
-          this.state.time[whichDay].end &&
-          this.state.time[whichDay].start < newValue
+        if (currentWeekData[whichDay] &&
+          currentWeekData[whichDay].start &&
+          currentWeekData[whichDay].end &&
+          currentWeekData[whichDay].start < newValue
         ){
-          totalTime = utils.getDifferenceBetweenTimesInMinutes(this.state.time[whichDay].start, newValue, breakTime)
+          totalTime = utils.getDifferenceBetweenTimesInMinutes(currentWeekData[whichDay].start, newValue, breakTime)
         }
         break;
       case 'break' :
-        if (this.state.time[whichDay] &&
-          this.state.time[whichDay].start &&
-          this.state.time[whichDay].end &&
-          this.state.time[whichDay].start < this.state.time[whichDay].end
+        if (currentWeekData[whichDay] &&
+          currentWeekData[whichDay].start &&
+          currentWeekData[whichDay].end &&
+          currentWeekData[whichDay].start < currentWeekData[whichDay].end
         ){
-          totalTime = utils.getDifferenceBetweenTimesInMinutes(this.state.time[whichDay].start, this.state.time[whichDay].end, newValue)
+          totalTime = utils.getDifferenceBetweenTimesInMinutes(currentWeekData[whichDay].start, currentWeekData[whichDay].end, newValue)
         }
         break;
       default:
@@ -135,33 +147,38 @@ class App extends Component {
 
     let totalForTheWeek = 0;
     
-    for (let day in this.state.time) {
+    for (let day in currentWeekData) {
       // If day is the updated day, use the new totalTime, else add the day.total from state
       if (day === whichDay) {
         totalForTheWeek += totalTime
       } else {
-        let dayTotal = (this.state.time[day].total && (this.state.time[day].total > 0)) ? this.state.time[day].total : 0;
+        let dayTotal = (currentWeekData[day].total && (currentWeekData[day].total > 0)) ? currentWeekData[day].total : 0;
         totalForTheWeek += dayTotal
       }
     }
       
     this.setState({
-      weeklyTotalProgress : totalForTheWeek,
-      time : {
-        ...this.state.time,
-        [whichDay]: {
-          ...this.state.time[whichDay],
-          [whichPeriod] : newValue,
-          'total' : totalTime
-        },
+      weeks : {
+        ...this.state.weeks,
+        [this.state.currentWeek] : { 
+          ...currentWeekData,
+          weeklyTotalProgress: totalForTheWeek,
+          [whichDay]: {
+            ...currentWeekData[whichDay],
+            [whichPeriod] : newValue,
+            total : totalTime
+          },
+        }
       }
     })
   }
   
   resetWeek(){
     this.setState({
-      time : {},
-      weeklyTotalProgress : 0
+      weeks : {
+        ...this.state.weeks,
+        [this.state.currentWeek] : {}
+      }
     }, this.updateWeeklyProgress())
   }
 
@@ -182,10 +199,8 @@ class App extends Component {
       currentWeek: 0,
       displayWeek: 0,
       showDeleteConfirmation: false,
-      weeklyRequiredTotalMinutes: 60 * 22.5,
-      weeklyTotalProgress: 0,
+      weeklyRequiredTotalMinutes: 60 * 22.2,
       weeks: {},
-      time: {}
     })
   }
 
@@ -226,7 +241,7 @@ class App extends Component {
 
     const hasPreviousWeek = this.state.displayWeek > 0;
     const isCurrentWeek = this.state.currentWeek === this.state.displayWeek;
-    const timeObject = isCurrentWeek ? this.state.time : this.state.weeks[this.state.displayWeek];
+    const timeObject = isCurrentWeek ? this.state.weeks[this.state.currentWeek] : this.state.weeks[this.state.displayWeek];
 
     return (
       <div className="app">
@@ -261,21 +276,21 @@ class App extends Component {
 
           <Day
           whichDay='weds'
-          timeValue={this.state.time.weds}
+          timeValue={timeObject.weds}
           onChange={this.handleTimeChange}
           disabled={false}
           />
           
           <Day
           whichDay='thurs'
-          timeValue={this.state.time.thurs}
+          timeValue={timeObject.thurs}
           onChange={this.handleTimeChange}
           disabled={false}
           />
           
           <Day
           whichDay='fri'
-          timeValue={this.state.time.fri}
+          timeValue={timeObject.fri}
           onChange={this.handleTimeChange}
           disabled={false}
           />
@@ -327,20 +342,20 @@ class App extends Component {
           <strong className="progress__time">
                 <span>
 
-                {this.state.weeklyTotalProgress === 0 ? '0' : utils.formatMinutesAsString(this.state.weeklyTotalProgress)}</span> / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}
+                {(!timeObject.weeklyTotalProgress || timeObject.weeklyTotalProgress === 0) ? '0' : utils.formatMinutesAsString(timeObject.weeklyTotalProgress)}</span> / {utils.formatMinutesAsString(this.state.weeklyRequiredTotalMinutes)}
               </strong>
             </p>
             <label htmlFor="weekly-progress" className="progress__label">Weekly progress</label>
             
             <progress
-              className={ this.state.weeklyTotalProgress >= this.state.weeklyRequiredTotalMinutes ? "progress__bar progress__bar--complete" : "progress__bar" }
+              className={ timeObject.weeklyTotalProgress >= this.state.weeklyRequiredTotalMinutes ? "progress__bar progress__bar--complete" : "progress__bar" }
               name="weekly-progress"
               max={this.state.weeklyRequiredTotalMinutes}
-              value={this.state.weeklyTotalProgress}
+              value={timeObject.weeklyTotalProgress}
               >
-              {this.state.weeklyTotalProgress}
+              {timeObject.weeklyTotalProgress}
             </progress>
-            <p className="progress__bar-label">{ Math.round(this.state.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) }%</p>
+            <p className="progress__bar-label">{ (timeObject.weeklyTotalProgress && timeObject.weeklyTotalProgress > 0) ? Math.round(timeObject.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) : 0 }%</p>
 
             <button className="btn btn--primary" id="button--new-week" onClick={ this.startNewWeek }>Save and start new week</button>
             <button className="btn btn--warning" id="button--reset" onClick={ this.resetWeek }>Reset week</button>
