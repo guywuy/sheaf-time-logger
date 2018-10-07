@@ -15,6 +15,7 @@ export const Day = ({
         <h2>{ whichDay.toUpperCase() }</h2>
       </div>
 
+      {!disabled && 
       <div>
         <label htmlFor={`time-${ whichDay }-start`}>Start</label>
         <input
@@ -24,10 +25,16 @@ export const Day = ({
           data-period="start"
           value={(timeValue && timeValue.start) ? timeValue.start : ''}
           onChange={onChange}
-          disabled = { disabled }
           />
       </div>
+      }
+      {disabled &&
+      <div>
+        <h5>{(timeValue && timeValue.start) ? timeValue.start : '--'}</h5>
+      </div>
+      }
 
+      {!disabled &&
       <div>
         <label htmlFor={`time-${ whichDay }-break`}>Break</label>
         <select
@@ -36,18 +43,22 @@ export const Day = ({
           data-period="break"
           value={(timeValue && timeValue.break) ? timeValue.break : 0}
           onChange={onChange}
-          disabled = { disabled }
         >
           { breakTimeOptions.map((option, i) => {
             return (
               <option value={option} key={i}>{option}</option>
               )
           }) }
-
         </select>
-        
       </div>
+      }
+      {disabled &&
+      <div>
+        <h5>{(timeValue && timeValue.break) ? timeValue.break : '--'}</h5>
+      </div>
+      }
 
+      {!disabled &&
       <div>
         <label htmlFor={`time-${ whichDay }-end`}>End</label>
         <input
@@ -57,9 +68,14 @@ export const Day = ({
           data-period="end"
           value={(timeValue && timeValue.end) ? timeValue.end : ''}
           onChange={onChange}
-          disabled = { disabled }
           />
       </div>
+      }
+      {disabled &&
+      <div>
+        <h5>{(timeValue && timeValue.end) ? timeValue.end : '--'}</h5>
+      </div>
+      }
 
       <h3 className="day__total">{ (timeValue && timeValue.total) ? utils.formatMinutesAsString(timeValue.total) : 0 }</h3>
     </div>

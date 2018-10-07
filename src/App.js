@@ -232,7 +232,7 @@ class App extends Component {
       <div className="app">
         <header className="header">
           { hasPreviousWeek &&
-            <button id="button--view-previous" onClick={ this.viewPreviousWeek }>&lt;</button>
+            <button className="btn" id="button--view-previous" onClick={ this.viewPreviousWeek }>&lt;</button>
           }
           <div className="header__title">
             <h1>Week { this.state.displayWeek }</h1>
@@ -242,7 +242,7 @@ class App extends Component {
           </div>
           
           { !isCurrentWeek &&
-            <button id="button--view-current" onClick={ this.viewCurrentWeek }>Back to current week</button>
+            <button className="btn btn--primary" id="button--view-current" onClick={ this.viewCurrentWeek }>Back to current week</button>
           }
         </header>
         
@@ -298,21 +298,21 @@ class App extends Component {
 
           <Day
           whichDay='weds'
-          timeValue={this.state.time.weds}
+          timeValue={timeObject.weds}
           onChange={this.handleTimeChange}
           disabled={true}
           />
           
           <Day
           whichDay='thurs'
-          timeValue={this.state.time.thurs}
+          timeValue={timeObject.thurs}
           onChange={this.handleTimeChange}
           disabled={true}
           />
           
           <Day
           whichDay='fri'
-          timeValue={this.state.time.fri}
+          timeValue={timeObject.fri}
           onChange={this.handleTimeChange}
           disabled={true}
           />
@@ -342,8 +342,8 @@ class App extends Component {
             </progress>
             <p className="progress__bar-label">{ Math.round(this.state.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) }%</p>
 
-            <button id="button--new-week" onClick={ this.startNewWeek }>Start new week</button>
-            <button id="button--reset" onClick={ this.resetWeek }>Reset week</button>
+            <button className="btn btn--primary" id="button--new-week" onClick={ this.startNewWeek }>Save and start new week</button>
+            <button className="btn btn--warning" id="button--reset" onClick={ this.resetWeek }>Reset week</button>
             
           </section>
         }
@@ -371,17 +371,29 @@ class App extends Component {
             <p className="progress__bar-label">{ Math.round(timeObject.weeklyTotalProgress * 100 / this.state.weeklyRequiredTotalMinutes) }%</p>
           </section>
         }
+
         <hr/>
+
+        <a
+          className="btn btn--primary" id="button--download"
+          href={`data:text/json;charset=utf-8,${encodeURIComponent(
+          JSON.stringify(this.state)
+          )}`}
+          download={`timesheet-${ new Date().toLocaleDateString() }.json`}
+        >
+          Download Data
+        </a>
+
         { !this.state.showDeleteConfirmation && 
-          <button id="button--delete-all" 
-          onClick={this.showClearConfirmation}>Clear ALL data</button>
+          <button className="btn btn--warning" id="button--delete-all" 
+          onClick={this.showClearConfirmation}>Clear all data (cannot be undone)</button>
         }
         { this.state.showDeleteConfirmation && 
         <div>
-          <button id="button--delete-all-cancel" 
-          onClick={this.cancelClearAllData}>NO!</button>
-          <button id="button--delete-all-confirm" 
-          onClick={this.confirmClearAllData}>REALLY?!?!</button>
+          <button className="btn btn--primary" id="button--delete-all-cancel" 
+          onClick={this.cancelClearAllData}>Cancel</button>
+          <button className="btnbtn--warning" id="button--delete-all-confirm" 
+          onClick={this.confirmClearAllData}>Yes, I'm sure</button>
         </div>
         }
       </div>

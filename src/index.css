@@ -96,12 +96,6 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
-.day input:disabled,
-.day select:disabled {
-  border: 2px solid #9e9e9e;
-  background: rgba(245, 197, 136, 0.4);
-}
-
 .progress__label {
   display: none;
 }
@@ -144,70 +138,58 @@ input::-webkit-inner-spin-button {
   font-weight: bold;
 }
 
-#button--new-week {
+.btn {
   background: none;
-  border: 2px solid #137a13;
+  border: 2px solid;
   border-radius: 4px;
+  padding: 0.5rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn--warning {
+  border-color: #bd1c1c;
+  color: #bd1c1c;
+}
+
+.btn--primary {
+  border-color: #137a13;
   color: #137a13;
+}
+
+#button--new-week {
   margin-right: 1rem;
   margin-bottom: 2rem;
 }
 
 #button--reset {
-  background: none;
-  border: 2px solid #bd1c1c;
-  border-radius: 4px;
-  color: #bd1c1c;
   margin-bottom: 2rem;
 }
 
 #button--view-previous {
-  background: none;
   border: 2px solid #001064;
-  border-radius: 4px;
   color: #001064;
   font-size: 2rem;
-  padding: 0.5rem;
 }
 
 #button--view-current {
-  background: none;
-  border: 2px solid #137a13;
-  border-radius: 4px;
-  color: #137a13;
   font-size: 14px;
-  padding: 0.5rem;
   font-weight: bold;
   width: 80px
 }
 
 #button--delete-all {
-  background: none;
-  border: 2px solid #bd1c1c;
-  border-radius: 4px;
-  color: #bd1c1c;
   font-size: 12px;
-  padding: 0.2rem;
   margin-top: 1rem;
+  display: block;
 }
 
 #button--delete-all-confirm {
-  background: none;
-  border: 2px solid #bd1c1c;
-  border-radius: 4px;
-  color: #bd1c1c;
   font-size: 12px;
-  padding: 0.5rem;
   margin: 1rem 1rem 0 0;
 }
 
 #button--delete-all-cancel {
-  background: none;
-  border: 2px solid #137a13;
-  border-radius: 4px;
-  background: #137a13;
-  color: #fff;
   font-size: 14px;
-  padding: 0.5rem;
   margin: 1rem 1rem 0 0;
 }
